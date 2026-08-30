@@ -1,4 +1,4 @@
-# react-native-zano
+# zano-native
 
 ## Unreleased
 

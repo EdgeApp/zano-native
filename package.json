@@ -1,14 +1,14 @@
 {
-  "name": "react-native-zano",
-  "version": "0.6.0",
-  "description": "React Native bindings for the Zano blockchain",
-  "homepage": "https://github.com/EdgeApp/react-native-zano",
+  "name": "zano-native",
+  "version": "0.0.1",
+  "description": "Native Zano wallet library for React Native and Node.js",
+  "homepage": "https://github.com/EdgeApp/zano-native",
   "repository": {
     "type": "git",
-    "url": "git@github.com:EdgeApp/react-native-zano.git"
+    "url": "git@github.com:EdgeApp/zano-native.git"
   },
-  "license": "BSD-3-Clause",
-  "author": "Airbitz, Inc.",
+  "license": "MIT",
+  "author": "Airbitz Inc dba Edge",
   "main": "lib/src/index.js",
   "types": "lib/src/index.d.ts",
   "files": [
@@ -17,19 +17,28 @@
     "/CHANGELOG.md",
     "/ios/",
     "/lib/",
+    "/LICENSE",
+    "/node.d.ts",
+    "/node.js",
     "/package.json",
-    "/react-native-zano.podspec",
+    "/prebuilds/",
     "/README.md",
-    "/src/zano-wrapper/zano-methods.hpp"
+    "/src/node/",
+    "/src/zano-wrapper/zano-methods.hpp",
+    "/zano-native.podspec",
+    "!/android/src/main/jniLibs/armeabi-v7a"
   ],
   "lint-staged": {
     "*.{js,ts}": "eslint"
   },
   "scripts": {
+    "build-native-arm64": "ZERO_AR_DATE=1 node -r sucrase/register ./scripts/update-sources.ts --arm64",
+    "build-native-host": "ZERO_AR_DATE=1 node -r sucrase/register ./scripts/build-native-host.ts",
     "fix": "npm run lint -- --fix",
     "lint": "eslint .",
-    "prepack": "npm run update-sources",
-    "prepare": "husky install && lint-staged && rimraf lib && tsc",
+    "prepare": "husky install && rimraf lib && tsc",
+    "prepublishOnly": "npm run build-native-arm64 && npm run build-native-host",
+    "smoke-node": "node -r sucrase/register ./scripts/smoke-node.ts",
     "test": "mocha",
     "update-sources": "ZERO_AR_DATE=1 node -r sucrase/register ./scripts/update-sources.ts",
     "verify": "npm run lint && npm test && tsc --noEmit -p tsconfig.eslint.json"
@@ -53,11 +62,44 @@
     "prettier": "^2.8.8",
     "rimraf": "^3.0.2",
     "sucrase": "^3.16.0",
-    "typescript": "5.0.4"
+    "typescript": "5.0.4",
+    "node-gyp": "^11.5.0"
   },
   "dependencies": {
     "cleaners": "^0.3.17",
     "rfc4648": "^1.5.4",
-    "tweetnacl": "^1.0.3"
+    "tweetnacl": "^1.0.3",
+    "node-addon-api": "^8.9.1"
+  },
+  "exports": {
+    ".": {
+      "types": "./lib/src/index.d.ts",
+      "react-native": "./lib/src/index.js",
+      "default": "./lib/src/index.js"
+    },
+    "./node": {
+      "types": "./lib/src/node.d.ts",
+      "default": "./lib/src/node.js"
+    },
+    "./package.json": "./package.json",
+    "./lib/src/CppBridge": {
+      "types": "./lib/src/CppBridge.d.ts",
+      "default": "./lib/src/CppBridge.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "node": [
+        "lib/src/node.d.ts"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "react-native": ">=0.47.0 <1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    }
   }
 }
