@@ -196,6 +196,27 @@ const iosPlatforms: IosPlatform[] = [
   // { sdk: 'iphoneos', arch: 'armv7' },
   // { sdk: 'iphoneos', arch: 'armv7s' },
 ]
+/**
+ * `--arm64` narrows the build to the slices a modern phone, an Apple-Silicon
+ * simulator and the Node CLI actually need: one Android ABI and the two arm64
+ * iOS slices, instead of four ABIs and an Intel simulator. Filtering the
+ * shared arrays in place keeps every consumer in agreement about what exists
+ * — the build loops, Boost's `--arch` list, and the xcframework packaging,
+ * which would otherwise `lipo` a slice that was never built.
+ */
+if (process.argv.includes('--arm64')) {
+  androidPlatforms.splice(
+    0,
+    androidPlatforms.length,
+    ...androidPlatforms.filter(platform => platform.arch === 'arm64-v8a')
+  )
+  iosPlatforms.splice(
+    0,
+    iosPlatforms.length,
+    ...iosPlatforms.filter(platform => platform.arch === 'arm64')
+  )
+}
+
 const iosSdkTriples: { [sdk: string]: string } = {
   iphoneos: '%arch%-apple-ios13.0',
   iphonesimulator: '%arch%-apple-ios13.0-simulator'
@@ -294,7 +315,11 @@ async function buildAndroidZano(platform: AndroidPlatform): Promise<void> {
     '-llog',
     `-Wl,--version-script=${join(srcPath, 'jni/exports.map')}`,
     '-Wl,--no-undefined',
-    '-Wl,-z,max-page-size=16384'
+    '-Wl,-z,max-page-size=16384',
+    // Drop the symbol table. JNI resolves through .dynsym, which
+    // --strip-all keeps, and the debug symbols roughly double the shipped
+    // library otherwise.
+    '-Wl,--strip-all'
   ])
 }
 

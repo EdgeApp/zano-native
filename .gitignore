@@ -10,3 +10,4 @@
 # iOS stuff:
 .DS_Store
 /ios/ZanoModule.xcframework/
+/prebuilds/

@@ -1,63 +1,24 @@
-# react-native-zano
+# zano-native
 
-This library packages Zano C++ client for use on React Native.
+Native Zano wallet library for React Native and Node.js.
 
-Supported platforms:
+The compiled SDK lives in this package. React Native and Node are hosts.
 
-- Android
-- iOS
+- GitHub: [EdgeApp/zano-native](https://github.com/EdgeApp/zano-native)
+- npm: `zano-native`
 
-## Usage
-
-First, add this library to your React Native app using NPM or Yarn, and run `pod install` as necessary to integrate it with your app's native code.
-
-Here is a simple usage example:
+## React Native
 
 ```js
-import { makeZano } from 'react-native-zano'
-
-const zano = makeZano()
-const version = await zano.getVersion()
+import { makeZano } from 'zano-native'
 ```
 
-We have types too, if you need those:
+Mobile binaries: `npm run update-sources`. Not run on `npm install`.
 
-```ts
-import type { CppBridge } from 'react-native-zano'
+## Node (CLI)
+
+```js
+import { makeNodeZanoModule } from 'zano-native/node'
 ```
 
-All methods available in Zano's `plain_wallet_api` are available here. In addition, there are convenience methods that provide higher-level abstractions by combining multiple raw asynchronous API calls and handling common error cases:
-
-- getSeedPhraseInfo - Returns information about a seed phrase
-- generateSeedPhrase - Creates a new seed phrase
-- startWallet - Opens an existing wallet or creates a new one if it doesn't exist
-- stopWallet - Safely closes a wallet
-- removeWallet - Deletes a wallet from the system
-- walletStatus - Gets the current status of a wallet
-- getBalances - Retrieves the balance information for a wallet
-- getTransactions - Fetches recent transactions for a wallet
-- whitelistAssets - Add assetIds to wallet's local whitelist
-- transfer - Sends funds to another wallet
-
-## Developing
-
-This library relies on a large amount of native C++ code from other repos. To integrate this code, you must run the following script before publishing this library to NPM:
-
-```sh
-npm run update-sources
-```
-
-This script does the following tasks:
-
-- Download third-party source code.
-- Compile shared libraries for Android.
-- Compile an iOS universal static library and put it into an XCFramework.
-
-The `update-sources` script is also the place to make edits when upgrading any of the third-party dependencies. The react-native-zano repo doesn't include these third-party C++ sources, since they are enormous.
-
-For this to work, you need:
-
-- A recent Android SDK, installed at `$ANDROID_HOME`
-- Xcode command-line tools
-- `cmake`, provided by `brew install cmake`
-- `llvm-objcopy`, provided by `brew install llvm`
+Host addon: `npm run build-native-host` (explicit; `prepare` / `prepack` compile JavaScript only).

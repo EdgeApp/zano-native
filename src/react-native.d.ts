@@ -1,5 +1,5 @@
 declare module 'react-native' {
-  import type { NativeZanoModule } from 'react-native-zano'
+  import type { NativeZanoModule } from 'zano-native'
   declare const NativeModules: {
     ZanoModule: NativeZanoModule
   }
