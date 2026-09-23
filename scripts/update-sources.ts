@@ -30,6 +30,7 @@ import { cpus } from 'os'
 import { join } from 'path'
 
 import { getNdkPath } from './utils/android-tools'
+import { checkCodeSections } from './utils/check-code-sections'
 import { patchCloseWallet } from './utils/closeWalletPatch'
 import {
   captureExec,
@@ -538,6 +539,9 @@ async function packageIosZano(): Promise<void> {
     '-output',
     join(__dirname, '../ios/ZanoModule.xcframework')
   ])
+
+  console.log('Checking section flags...')
+  await checkCodeSections(join(__dirname, '../ios/ZanoModule.xcframework'))
 }
 
 main().catch(error => {
