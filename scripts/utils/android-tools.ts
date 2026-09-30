@@ -23,7 +23,7 @@ export async function getNdkPath(): Promise<string> {
       ANDROID_HOME,
       'cmdline-tools/latest/bin/sdkmanager'
     )
-    await loudExec(sdkManagerPath, [`"ndk;${NDK_VERSION}"`])
+    await loudExec(sdkManagerPath, [`ndk;${NDK_VERSION}`])
   }
 
   return ndkPath
